@@ -1,5 +1,6 @@
 <div>
     <h1>Listado de artículos</h1>
+    <a href="{{ route('articles.create') }}">Crear</a>
     <input
         wire:model="search"
         type="search"
