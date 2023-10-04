@@ -12,10 +12,12 @@ class ArticleForm extends Component
 
     public function save()
     {
-        $article = new Article;
-        $article->title = $this->title;
-        $article->content = $this->content;
-        $article->save();
+        $data = $this->validate([
+            'title' => ['required'],
+            'content' => ['required'],
+        ]);
+
+        Article::create($data);
 
         session()->flash('status', __('Article created.'));
 
