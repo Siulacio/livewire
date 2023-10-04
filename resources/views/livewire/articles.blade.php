@@ -8,11 +8,7 @@
     >
     <ul>
         @foreach($articles as $article)
-            <li>
-                <a href="{{ route('articles.show', $article) }}">
-                    {{ $article->title }}
-                </a>
-            </li>
+            <li>{{ $article->title }}</li>
         @endforeach
     </ul>
 </div>
