@@ -11,9 +11,24 @@ class ArticleForm extends Component
     public $content;
 
     protected $rules = [
-        'title' => ['required'],
+        'title' => ['required', 'min:4'],
         'content' => ['required'],
     ];
+
+    protected $messages = [
+        'title.required' => 'El :attribute es obligatorio',
+        'title.min' => 'El :attribute debe tener al menos 4 caracteres',
+    ];
+
+    protected $validationAttributes = [
+        'title' => 'Título',
+        'content' => 'Contenido',
+    ];
+
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName);
+    }
 
     public function save()
     {
