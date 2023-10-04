@@ -10,14 +10,14 @@ class ArticleForm extends Component
     public $title;
     public $content;
 
+    protected $rules = [
+        'title' => ['required'],
+        'content' => ['required'],
+    ];
+
     public function save()
     {
-        $data = $this->validate([
-            'title' => ['required'],
-            'content' => ['required'],
-        ]);
-
-        Article::create($data);
+        Article::create($this->validate());
 
         session()->flash('status', __('Article created.'));
 
