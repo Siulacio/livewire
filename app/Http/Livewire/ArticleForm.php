@@ -7,23 +7,28 @@ use Livewire\Component;
 
 class ArticleForm extends Component
 {
-    public $title;
-    public $content;
+    public Article $article;
 
     protected $rules = [
-        'title' => ['required', 'min:4'],
-        'content' => ['required'],
+        'article.title' => ['required', 'min:4'],
+        'article.content' => ['required'],
     ];
 
     protected $messages = [
-        'title.required' => 'El :attribute es obligatorio',
-        'title.min' => 'El :attribute debe tener al menos 4 caracteres',
+        'article.title.required' => 'El :attribute es obligatorio',
+        'article.title.min' => 'El :attribute debe tener al menos 4 caracteres',
+        'article.content.required' => 'El :attribute es obligatorio',
     ];
 
     protected $validationAttributes = [
         'title' => 'Título',
         'content' => 'Contenido',
     ];
+
+    public function mount(Article $article)
+    {
+        $this->article = $article;
+    }
 
     public function updated($propertyName)
     {
@@ -32,9 +37,11 @@ class ArticleForm extends Component
 
     public function save()
     {
-        Article::create($this->validate());
+        $this->validate();
 
-        session()->flash('status', __('Article created.'));
+        $this->article->save();
+
+        session()->flash('status', __('Article saved.'));
 
         $this->redirectRoute('articles.index');
     }
