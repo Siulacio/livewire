@@ -14,17 +14,6 @@ class ArticleForm extends Component
         'article.content' => ['required'],
     ];
 
-    protected $messages = [
-        'article.title.required' => 'El :attribute es obligatorio',
-        'article.title.min' => 'El :attribute debe tener al menos 4 caracteres',
-        'article.content.required' => 'El :attribute es obligatorio',
-    ];
-
-    protected $validationAttributes = [
-        'title' => 'Título',
-        'content' => 'Contenido',
-    ];
-
     public function mount(Article $article)
     {
         $this->article = $article;
