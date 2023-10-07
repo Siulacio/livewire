@@ -30,6 +30,7 @@ class ArticleFormTest extends TestCase
         Livewire::test(ArticleForm::class)
             ->assertSeeHtml('wire:submit.prevent="save"')
             ->assertSeeHtml('wire:model="article.title"')
+            ->assertSeeHtml('wire:model="article.slug"')
             ->assertSeeHtml('wire:model="article.content"');
     }
 
@@ -38,6 +39,7 @@ class ArticleFormTest extends TestCase
     {
         Livewire::test(ArticleForm::class)
             ->set('article.title', 'New article')
+            ->set('article.slug', 'new-article')
             ->set('article.content', 'Article content')
             ->call('save')
             ->assertSessionHas('status')
@@ -45,6 +47,7 @@ class ArticleFormTest extends TestCase
 
         $this->assertDatabaseHas('articles', [
             'title' => 'New article',
+            'slug' => 'new-article',
             'content' => 'Article content'
         ]);
     }
@@ -56,8 +59,10 @@ class ArticleFormTest extends TestCase
 
         Livewire::test(ArticleForm::class, ['article' => $article])
             ->assertSet('article.title', $article->title)
+            ->assertSet('article.slug', $article->slug)
             ->assertSet('article.content', $article->content)
             ->set('article.title', 'Updated title')
+            ->set('article.slug', 'updated-slug')
             ->call('save')
             ->assertSessionHas('status')
             ->assertRedirect(route('articles.index'));
@@ -66,6 +71,7 @@ class ArticleFormTest extends TestCase
 
         $this->assertDatabaseHas('articles', [
             'title' => 'Updated title',
+            'slug' => 'updated-slug'
         ]);
     }
 
@@ -77,6 +83,44 @@ class ArticleFormTest extends TestCase
             ->call('save')
             ->assertHasErrors(['article.title' => 'required'])
             ->assertSeeHtml(__('validation.required', ['attribute' => 'title']));
+    }
+
+    /** @test */
+    function slug_is_required(): void
+    {
+        Livewire::test(ArticleForm::class)
+            ->set('article.title', 'New Article')
+            ->set('article.content', 'Article content')
+            ->call('save')
+            ->assertHasErrors(['article.slug' => 'required'])
+            ->assertSeeHtml(__('validation.required', ['attribute' => 'slug']));
+    }
+
+    /** @test */
+    function slug_must_be_unique(): void
+    {
+        $article = Article::factory()->create();
+
+        Livewire::test(ArticleForm::class)
+            ->set('article.title', 'New Article')
+            ->set('article.slug', $article->slug)
+            ->set('article.content', 'Article content')
+            ->call('save')
+            ->assertHasErrors(['article.slug' => 'unique'])
+            ->assertSeeHtml(__('validation.unique', ['attribute' => 'slug']));
+    }
+
+    /** @test */
+    function unique_rule_should_be_ignored_when_updating_the_same_slug(): void
+    {
+        $article = Article::factory()->create();
+
+        Livewire::test(ArticleForm::class, ['article' => $article])
+            ->set('article.title', 'New Article')
+            ->set('article.slug', $article->slug)
+            ->set('article.content', 'Article content')
+            ->call('save')
+            ->assertHasNoErrors(['article.slug' => 'unique']);
     }
 
     /** @test */
