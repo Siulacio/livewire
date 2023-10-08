@@ -4,6 +4,7 @@ namespace Tests\Feature\Livewire;
 
 use App\Http\Livewire\ArticleForm;
 use App\Models\Article;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -13,14 +14,28 @@ class ArticleFormTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function article_form_renders_properly(): void
+    function guest_cannot_create_or_update_articles(): void
     {
         $this->get(route('articles.create'))
-            ->assertSeeLivewire(ArticleForm::class);
+            ->assertRedirect('login');
 
         $article = Article::factory()->create();
 
         $this->get(route('articles.edit', $article))
+            ->assertRedirect('login');
+    }
+
+    /** @test */
+    function article_form_renders_properly(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->get(route('articles.create'))
+            ->assertSeeLivewire(ArticleForm::class);
+
+        $article = Article::factory()->create();
+
+        $this->actingAs($user)->get(route('articles.edit', $article))
             ->assertSeeLivewire(ArticleForm::class);
     }
 
@@ -37,7 +52,9 @@ class ArticleFormTest extends TestCase
     /** @test */
     function can_create_new_articles(): void
     {
-        Livewire::test(ArticleForm::class)
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)->test(ArticleForm::class)
             ->set('article.title', 'New article')
             ->set('article.slug', 'new-article')
             ->set('article.content', 'Article content')
@@ -48,7 +65,8 @@ class ArticleFormTest extends TestCase
         $this->assertDatabaseHas('articles', [
             'title' => 'New article',
             'slug' => 'new-article',
-            'content' => 'Article content'
+            'content' => 'Article content',
+            'user_id' => $user->id,
         ]);
     }
 
@@ -57,7 +75,9 @@ class ArticleFormTest extends TestCase
     {
         $article = Article::factory()->create();
 
-        Livewire::test(ArticleForm::class, ['article' => $article])
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)->test(ArticleForm::class, ['article' => $article])
             ->assertSet('article.title', $article->title)
             ->assertSet('article.slug', $article->slug)
             ->assertSet('article.content', $article->content)
@@ -71,7 +91,8 @@ class ArticleFormTest extends TestCase
 
         $this->assertDatabaseHas('articles', [
             'title' => 'Updated title',
-            'slug' => 'updated-slug'
+            'slug' => 'updated-slug',
+            'user_id' => $user->id,
         ]);
     }
 
@@ -130,7 +151,9 @@ class ArticleFormTest extends TestCase
     {
         $article = Article::factory()->create();
 
-        Livewire::test(ArticleForm::class, ['article' => $article])
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)->test(ArticleForm::class, ['article' => $article])
             ->set('article.title', 'New Article')
             ->set('article.slug', $article->slug)
             ->set('article.content', 'Article content')
