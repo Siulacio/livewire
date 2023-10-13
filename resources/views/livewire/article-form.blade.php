@@ -11,6 +11,12 @@
                 <x-slot name="description">{{ __('Some description') }}</x-slot>
                <x-slot name="form">
                    <div class="col-span-6 sm:col-span-4">
+                       <x-jet-label for="image" :value="__('Image')"/>
+                       <x-jet-input wire:model="image" id="image" class="mt-1 block w-full" type="file"/>
+                       <x-jet-input-error for="image" class="mt-2"/>
+                   </div>
+
+                   <div class="col-span-6 sm:col-span-4">
                        <x-jet-label for="title" :value="__('Title')"/>
                        <x-jet-input wire:model="article.title" id="title" class="mt-1 block w-full" type="text"/>
                        <x-jet-input-error for="article.title" class="mt-2"/>

@@ -7,10 +7,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class ArticleForm extends Component
 {
+    use WithFileUploads;
+
     public Article $article;
+    public $image;
 
     /**
      * este metodo se usa para reemplazar el array pues en el array no se podía concatenar el id del slug
@@ -19,6 +23,7 @@ class ArticleForm extends Component
     protected function rules(): array
     {
         return [
+            'image' => ['image', 'max:2048'],
             'article.title' => ['required', 'min:4'],
             'article.slug' => [
                 'required',
@@ -47,6 +52,8 @@ class ArticleForm extends Component
     public function save()
     {
         $this->validate();
+
+        $this->article->image = $this->image->store('/', 'public');
 
         Auth::user()->articles()->save($this->article);
 
