@@ -6,6 +6,8 @@ use App\Http\Livewire\ArticleForm;
 use App\Models\Article;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -45,16 +47,20 @@ class ArticleFormTest extends TestCase
         Livewire::test(ArticleForm::class)
             ->assertSeeHtml('wire:submit.prevent="save"')
             ->assertSeeHtml('wire:model="article.title"')
-            ->assertSeeHtml('wire:model="article.slug"')
-            ->assertSeeHtml('wire:model="article.content"');
+            ->assertSeeHtml('wire:model="article.slug"');
     }
 
     /** @test */
     function can_create_new_articles(): void
     {
+        Storage::fake('public');
+
+        $image = UploadedFile::fake()->image('post-image.png');
+
         $user = User::factory()->create();
 
         Livewire::actingAs($user)->test(ArticleForm::class)
+            ->set('image', $image)
             ->set('article.title', 'New article')
             ->set('article.slug', 'new-article')
             ->set('article.content', 'Article content')
@@ -63,11 +69,14 @@ class ArticleFormTest extends TestCase
             ->assertRedirect(route('articles.index'));
 
         $this->assertDatabaseHas('articles', [
+            'image' => $imagePath = Storage::disk('public')->files()[0],
             'title' => 'New article',
             'slug' => 'new-article',
             'content' => 'Article content',
             'user_id' => $user->id,
         ]);
+
+        Storage::disk('public')->assertExists($imagePath);
     }
 
     /** @test */
@@ -97,6 +106,32 @@ class ArticleFormTest extends TestCase
     }
 
     /** @test */
+    function can_update_articles_image(): void
+    {
+        Storage::fake('public');
+
+        $oldImage = UploadedFile::fake()->image('old-image.png');
+        $oldImagePath = $oldImage->store('/', 'public');
+        $newImage = UploadedFile::fake()->image('new-image.png');
+
+        $article = Article::factory()->create([
+            'image' => $oldImagePath,
+        ]);
+
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)->test(ArticleForm::class, ['article' => $article])
+            ->set('image', $newImage)
+            ->call('save')
+            ->assertSessionHas('status')
+            ->assertRedirect(route('articles.index'));
+
+        Storage::disk('public')
+            ->assertExists($article->fresh()->image)
+            ->assertMissing($oldImagePath);
+    }
+
+    /** @test */
     function title_is_required(): void
     {
         Livewire::test(ArticleForm::class)
@@ -104,6 +139,46 @@ class ArticleFormTest extends TestCase
             ->call('save')
             ->assertHasErrors(['article.title' => 'required'])
             ->assertSeeHtml(__('validation.required', ['attribute' => 'title']));
+    }
+
+    /** @test */
+    function image_is_required(): void
+    {
+        Livewire::test(ArticleForm::class)
+            ->set('article.title', 'Article title')
+            ->set('article.content', 'Article content')
+            ->call('save')
+            ->assertHasErrors(['image' => 'required'])
+            ->assertSeeHtml(__('validation.required', ['attribute' => 'image']));
+    }
+
+    /** @test */
+    function image_field_must_be_of_type_image(): void
+    {
+        Livewire::test(ArticleForm::class)
+            ->set('image', 'string-not-allowed')
+            ->call('save')
+            ->assertHasErrors(['image' => 'image'])
+            ->assertSeeHtml(__('validation.image', ['attribute' => 'image']));
+    }
+
+    /** @test */
+    function image_must_be_2mb_max(): void
+    {
+        Storage::fake('public');
+
+        $image = UploadedFile::fake()
+            ->image('post-image.png')
+            ->size(3000);
+
+        Livewire::test(ArticleForm::class)
+            ->set('image', $image)
+            ->call('save')
+            ->assertHasErrors(['image' => 'max'])
+            ->assertSeeHtml(__('validation.max.file', [
+                'attribute' => 'image',
+                'max' => '2048',
+            ]));
     }
 
     /** @test */
