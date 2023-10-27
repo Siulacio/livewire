@@ -199,6 +199,32 @@ class ArticleFormTest extends TestCase
     }
 
     /** @test */
+    function category_is_required(): void
+    {
+        Livewire::test(ArticleForm::class)
+            ->set('article.title', 'New Article')
+            ->set('article.slug', 'new-article')
+            ->set('article.category_id', null)
+            ->set('article.content', 'Article content')
+            ->call('save')
+            ->assertHasErrors(['article.category_id' => 'required'])
+            ->assertSeeHtml(__('validation.required', ['attribute' => 'category id']));
+    }
+
+    /** @test */
+    function category_must_exist_in_database(): void
+    {
+        Livewire::test(ArticleForm::class)
+            ->set('article.title', 'New Article')
+            ->set('article.slug', 'new-article')
+            ->set('article.category_id', 1)
+            ->set('article.content', 'Article content')
+            ->call('save')
+            ->assertHasErrors(['article.category_id' => 'exists'])
+            ->assertSeeHtml(__('validation.exists', ['attribute' => 'category id']));
+    }
+
+    /** @test */
     function slug_must_be_unique(): void
     {
         $article = Article::factory()->create();
