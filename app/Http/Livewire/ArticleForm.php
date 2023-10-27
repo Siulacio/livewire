@@ -17,6 +17,7 @@ class ArticleForm extends Component
 
     public Article $article;
     public $image;
+    public bool $showCategoryModal = false;
 
     /**
      * este metodo se usa para reemplazar el array pues en el array no se podía concatenar el id del slug
