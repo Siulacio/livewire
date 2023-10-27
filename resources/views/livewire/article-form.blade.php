@@ -30,6 +30,12 @@
                     </div>
 
                     <div class="col-span-6 sm:col-span-4">
+                        <x-jet-label for="category_id" :value="__('Category')"/>
+                        <x-select wire:model="article.category_id" :options="$categories" id="category_id" :placeholder="__('Select category')" class="mt-1 block w-full"/>
+                        <x-jet-input-error for="article.category_id" class="mt-2"/>
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="content" :value="__('Content')"/>
                         <x-html-editor wire:model="article.content" id="content"
                                        class="mt-1 block w-full"></x-html-editor>
