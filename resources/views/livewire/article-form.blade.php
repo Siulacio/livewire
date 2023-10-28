@@ -33,7 +33,7 @@
                         <x-jet-label for="category_id" :value="__('Category')"/>
                         <div class="flex space-x-2 mt-1">
                             <x-select wire:model="article.category_id" :options="$categories" id="category_id" :placeholder="__('Select category')" class="block w-full"/>
-                            <x-jet-secondary-button wire:click="$set('showCategoryModal', true)" class="!p-2.5">
+                            <x-jet-secondary-button wire:click="openCategoryForm" class="!p-2.5">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
@@ -59,11 +59,31 @@
             </x-jet-form-section>
         </div>
     </div>
-    <x-jet-dialog-modal wire:model="showCategoryModal">
-        <x-slot name="title">Modal Title</x-slot>
-        <x-slot name="content">Category Form</x-slot>
-        <x-slot name="footer">
-            <x-jet-secondary-button wire:click="$set('showCategoryModal', false)">Cancel</x-jet-secondary-button>
-        </x-slot>
-    </x-jet-dialog-modal>
+    <x-jet-modal wire:model="showCategoryModal">
+        <form wire:submit.prevent="saveNewCategory">
+            <div class="px-6 py-4">
+                <div class="text-lg">
+                    {{ __('New Category') }}
+                </div>
+
+                <div class="mt-4 space-y-3">
+                    <div class="col-span-6 sm:col-span-4">
+                        <x-jet-label for="new-category-name" :value="__('Name')"/>
+                        <x-jet-input wire:model="newCategory.name" id="new-category-name" class="mt-1 block w-full" type="text"/>
+                        <x-jet-input-error for="newCategory.name" class="mt-2"/>
+                    </div>
+                    <div class="col-span-6 sm:col-span-4">
+                        <x-jet-label for="new-category-slug" :value="__('Slug')"/>
+                        <x-jet-input wire:model="newCategory.slug" id="new-category-slug" class="mt-1 block w-full" type="text"/>
+                        <x-jet-input-error for="newCategory.slug" class="mt-2"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-gray-100 text-right space-x-2">
+                <x-jet-secondary-button wire:click="closeCategoryForm">Cancel</x-jet-secondary-button>
+                <x-jet-button>{{ __('Submit') }}</x-jet-button>
+            </div>
+        </form>
+    </x-jet-modal>
 </div>
