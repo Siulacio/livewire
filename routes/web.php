@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Livewire\ArticleForm;
-use App\Http\Livewire\Articles;
+use App\Http\Livewire\ArticlesTable;
 use App\Http\Livewire\ArticleShow;
 use Illuminate\Support\Facades\Route;
 
@@ -16,22 +16,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', Articles::class)->name('articles.index');
-Route::get('/blog/crear', ArticleForm::class)->name('articles.create')
-    ->middleware('auth');
-
 Route::get('/blog/{article}', ArticleShow::class)->name('articles.show');
 
-Route::get('/blog/{article:id}/edit', ArticleForm::class)
-    ->name('articles.edit')
-    ->middleware('auth');
+// Dashboard Routes
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])
+    ->prefix('dashboard')->group(function () {
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified'
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
+        Route::view('/', 'dashboard')->name('dashboard');
+
+        Route::get('/blog', ArticlesTable::class)->name('articles.index');
+
+        Route::get('/blog/crear', ArticleForm::class)->name('articles.create');
+
+        Route::get('/blog/{article:id}/edit', ArticleForm::class)->name('articles.edit');
+
+    });
