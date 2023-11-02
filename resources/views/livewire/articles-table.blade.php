@@ -61,6 +61,9 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <div class="px-4 py-3 bg-gray-50 border-t">
+                            {{ $articles->links() }}
+                        </div>
                     </div>
                 </div>
             </div>
