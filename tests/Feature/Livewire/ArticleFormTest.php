@@ -70,7 +70,7 @@ class ArticleFormTest extends TestCase
             ->set('article.content', 'Article content')
             ->set('article.category_id', $category->id)
             ->call('save')
-            ->assertSessionHas('status')
+            ->assertSessionHas('flash.banner')
             ->assertRedirect(route('articles.index'));
 
         $this->assertDatabaseHas('articles', [
@@ -100,7 +100,7 @@ class ArticleFormTest extends TestCase
             ->set('article.title', 'Updated title')
             ->set('article.slug', 'updated-slug')
             ->call('save')
-            ->assertSessionHas('status')
+            ->assertSessionHas('flash.banner')
             ->assertRedirect(route('articles.index'));
 
         $this->assertDatabaseCount('articles', 1);

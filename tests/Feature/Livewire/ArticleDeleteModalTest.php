@@ -30,7 +30,8 @@ class ArticleDeleteModalTest extends TestCase
 
         Livewire::actingAs($user)->test(ArticleDeleteModal::class, ['article' => $article])
             ->call('delete')
-            ->assertSessionHas('status')
+            ->assertSessionHas('flash.bannerStyle', 'danger')
+            ->assertSessionHas('flash.banner')
             ->assertRedirect(route('articles.index'));
 
         Storage::disk('public')->assertMissing($imagePath);
