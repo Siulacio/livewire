@@ -51,9 +51,11 @@
 
                     <x-slot name="actions">
                         @if($article->exists)
-                            <x-jet-danger-button wire:click="$set('showDeleteModal', true)" class="mr-auto">
-                                {{ __('Delete') }}
-                            </x-jet-danger-button>
+                            <livewire:article-delete-modal :article="$article">
+                                <x-jet-danger-button wire:click="$emit('confirmArticleDeletion')" class="mr-auto">
+                                    {{ __('Delete') }}
+                                </x-jet-danger-button>
+                            </livewire:article-delete-modal>
                         @endif
                         <x-jet-button>
                             {{ __('Save') }}
@@ -64,16 +66,6 @@
             </x-jet-form-section>
         </div>
     </div>
-    @if($article->exists)
-        <x-jet-confirmation-modal wire:model="showDeleteModal">
-            <x-slot name="title">Are you sure?</x-slot>
-            <x-slot name="content">Do you want to delete this article: <b>{{$article->title}}</b> ?</x-slot>
-            <x-slot name="footer">
-                <x-jet-button wire:click="$set('showDeleteModal', false)">{{ __('Cancel') }}</x-jet-button>
-                <x-jet-danger-button wire:click="delete" >{{ __('Confirm') }}</x-jet-danger-button>
-            </x-slot>
-        </x-jet-confirmation-modal>
-    @endif
 
     <x-jet-modal wire:model="showCategoryModal">
         <form wire:submit.prevent="saveNewCategory">
