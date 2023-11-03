@@ -2,9 +2,9 @@
 
 <div x-data="{ focused: false }" class="relative">
     @if($image instanceof \Livewire\TemporaryUploadedFile)
-        <x-jet-danger-button wire:click="$set('{{$id}}')" class="absolute bottom-2 right-2">
+        <x-danger-button wire:click="$set('{{$id}}')" class="absolute bottom-2 right-2">
             {{ __('Change Image') }}
-        </x-jet-danger-button>
+        </x-danger-button>
         <img src="{{ $image->temporaryUrl() }}" class="border-2 rounded">
     @elseif($existing)
         <label for="{{ $id }}"
@@ -21,7 +21,7 @@
         </div>
     @endif
     @unless($image)
-        <x-jet-input
+        <x-input
             wire:model="{{$id}}"
             x-on:focus="focused = true"
             x-on:blur="focused = false"
