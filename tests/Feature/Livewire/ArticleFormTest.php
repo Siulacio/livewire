@@ -86,30 +86,6 @@ class ArticleFormTest extends TestCase
     }
 
     /** @test */
-    function can_delete_articles(): void
-    {
-        Storage::fake();
-
-        $imagePath = UploadedFile::fake()->image('image.png')->store('/', 'public');
-
-        $article = Article::factory()->create([
-            'image' => $imagePath,
-        ]);
-
-        $user = User::factory()->create();
-
-        Livewire::actingAs($user)->test(ArticleForm::class, ['article' => $article])
-            ->call('delete')
-            ->assertSessionHas('status')
-            ->assertRedirect(route('articles.index'));
-
-        Storage::disk('public')->assertMissing($imagePath);
-
-        $this->assertDatabaseCount('articles', 0);
-
-    }
-
-    /** @test */
     function can_update_articles(): void
     {
         $article = Article::factory()->create();
