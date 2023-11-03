@@ -130,7 +130,7 @@ class ArticleFormTest extends TestCase
         Livewire::actingAs($user)->test(ArticleForm::class, ['article' => $article])
             ->set('image', $newImage)
             ->call('save')
-            ->assertSessionHas('status')
+            ->assertSessionHas('flash.banner')
             ->assertRedirect(route('articles.index'));
 
         Storage::disk('public')
