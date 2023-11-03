@@ -52,7 +52,7 @@
                     <x-slot name="actions">
                         @if($article->exists)
                             <livewire:article-delete-modal :article="$article">
-                                <x-jet-danger-button wire:click="$emit('confirmArticleDeletion')" class="mr-auto">
+                                <x-jet-danger-button wire:click="$emit('confirmArticleDeletion', {{ $article }})" class="mr-auto">
                                     {{ __('Delete') }}
                                 </x-jet-danger-button>
                             </livewire:article-delete-modal>
