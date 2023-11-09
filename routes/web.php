@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Livewire\ArticleForm;
-use App\Http\Livewire\ArticlesTable;
-use App\Http\Livewire\ArticleShow;
+use App\Livewire\ArticleForm;
+use App\Livewire\ArticlesTable;
+use App\Livewire\ArticleShow;
 use Illuminate\Support\Facades\Route;
 
 /*

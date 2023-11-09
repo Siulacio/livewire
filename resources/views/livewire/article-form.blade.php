@@ -13,26 +13,26 @@
 
                 <x-slot name="form">
                     <div class="col-span-6 sm:col-span-4">
-                        <x-select-image wire:model="image" :image="$image" :existing="$article->image"/>
+                        <x-select-image wire:model.live="image" :image="$image" :existing="$article->image"/>
                         <x-input-error for="image" class="mt-2"/>
                     </div>
 
                     <div class="col-span-6 sm:col-span-4">
                         <x-label for="title" :value="__('Title')"/>
-                        <x-input wire:model="article.title" id="title" class="mt-1 block w-full" type="text"/>
+                        <x-input wire:model.blur="article.title" id="title" class="mt-1 block w-full" type="text"/>
                         <x-input-error for="article.title" class="mt-2"/>
                     </div>
 
                     <div class="col-span-6 sm:col-span-4">
                         <x-label for="slug" :value="__('Slug')"/>
-                        <x-input wire:model="article.slug" id="slug" class="mt-1 block w-full" type="text"/>
+                        <x-input wire:model.live="article.slug" id="slug" class="mt-1 block w-full" type="text"/>
                         <x-input-error for="article.slug" class="mt-2"/>
                     </div>
 
                     <div class="col-span-6 sm:col-span-4">
                         <x-label for="category_id" :value="__('Category')"/>
                         <div class="flex space-x-2 mt-1">
-                            <x-select wire:model="article.category_id" :options="$categories" id="category_id" :placeholder="__('Select category')" class="block w-full"/>
+                            <x-select wire:model.live="article.category_id" :options="$categories" id="category_id" :placeholder="__('Select category')" class="block w-full"/>
                             <x-secondary-button wire:click="openCategoryForm" class="!p-2.5">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -44,7 +44,7 @@
 
                     <div class="col-span-6 sm:col-span-4">
                         <x-label for="content" :value="__('Content')"/>
-                        <x-html-editor wire:model="article.content" id="content"
+                        <x-html-editor wire:model.live="article.content" id="content"
                                        class="mt-1 block w-full"></x-html-editor>
                         <x-input-error for="article.content" class="mt-2"/>
                     </div>
@@ -52,7 +52,7 @@
                     <x-slot name="actions">
                         @if($article->exists)
                             <livewire:article-delete-modal :article="$article">
-                                <x-danger-button wire:click="$emit('confirmArticleDeletion', {{ $article }})" class="mr-auto">
+                                <x-danger-button wire:click="$dispatch('confirmArticleDeletion', { article: {{ $article }} })" class="mr-auto">
                                     {{ __('Delete') }}
                                 </x-danger-button>
                             </livewire:article-delete-modal>
@@ -67,8 +67,8 @@
         </div>
     </div>
 
-    <x-modal wire:model="showCategoryModal">
-        <form wire:submit.prevent="saveNewCategory">
+    <x-modal wire:model.live="showCategoryModal">
+        <form wire:submit="saveNewCategory">
             <div class="px-6 py-4">
                 <div class="text-lg">
                     {{ __('New Category') }}
@@ -77,12 +77,12 @@
                 <div class="mt-4 space-y-3">
                     <div class="col-span-6 sm:col-span-4">
                         <x-label for="new-category-name" :value="__('Name')"/>
-                        <x-input wire:model="newCategory.name" id="new-category-name" class="mt-1 block w-full" type="text"/>
+                        <x-input wire:model.blur="newCategory.name" id="new-category-name" class="mt-1 block w-full" type="text"/>
                         <x-input-error for="newCategory.name" class="mt-2"/>
                     </div>
                     <div class="col-span-6 sm:col-span-4">
                         <x-label for="new-category-slug" :value="__('Slug')"/>
-                        <x-input wire:model="newCategory.slug" id="new-category-slug" class="mt-1 block w-full" type="text"/>
+                        <x-input wire:model.live="newCategory.slug" id="new-category-slug" class="mt-1 block w-full" type="text"/>
                         <x-input-error for="newCategory.slug" class="mt-2"/>
                     </div>
                 </div>

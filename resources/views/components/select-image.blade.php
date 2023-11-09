@@ -1,7 +1,7 @@
 @php($id = $attributes->wire('model')->value)
 
 <div x-data="{ focused: false }" class="relative">
-    @if($image instanceof \Livewire\TemporaryUploadedFile)
+    @if($image instanceof Livewire\Features\SupportFileUploads\TemporaryUploadedFile)
         <x-danger-button wire:click="$set('{{$id}}')" class="absolute bottom-2 right-2">
             {{ __('Change Image') }}
         </x-danger-button>
@@ -22,7 +22,7 @@
     @endif
     @unless($image)
         <x-input
-            wire:model="{{$id}}"
+            wire:model.live="{{$id}}"
             x-on:focus="focused = true"
             x-on:blur="focused = false"
             :id="$id"

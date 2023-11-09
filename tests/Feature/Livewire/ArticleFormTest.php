@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Livewire;
 
-use App\Http\Livewire\ArticleForm;
+use App\Livewire\ArticleForm;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
@@ -47,9 +47,9 @@ class ArticleFormTest extends TestCase
     function blade_template_is_wired_properly(): void
     {
         Livewire::test(ArticleForm::class)
-            ->assertSeeHtml('wire:submit.prevent="save"')
-            ->assertSeeHtml('wire:model="article.title"')
-            ->assertSeeHtml('wire:model="article.slug"');
+            ->assertSeeHtml('wire:submit="save"')
+            ->assertSeeHtml('wire:model.blur="article.title"')
+            ->assertSeeHtml('wire:model.live="article.slug"');
     }
 
     /** @test */

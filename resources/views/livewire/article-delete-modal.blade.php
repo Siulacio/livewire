@@ -1,5 +1,5 @@
 <div>
-    <x-confirmation-modal wire:model="showDeleteModal">
+    <x-confirmation-modal wire:model.live="showDeleteModal">
         <x-slot name="title">Are you sure?</x-slot>
         <x-slot name="content">Do you want to delete this article: <b>{{$article->title}}</b> ?</x-slot>
         <x-slot name="footer">

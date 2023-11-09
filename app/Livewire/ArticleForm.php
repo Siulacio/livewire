@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\Article;
 use App\Models\Category;
@@ -29,14 +29,23 @@ class ArticleForm extends Component
     public function closeCategoryForm()
     {
         $this->showCategoryModal = false;
-        $this->newCategory = null;
+        $this->newCategory = new Category;
         $this->clearValidation('newCategory.*');
     }
 
     public function saveNewCategory()
     {
-        $this->validateOnly('newCategory.name');
-        $this->validateOnly('newCategory.slug');
+        $this->validate([
+            'newCategory.name' => [
+                Rule::requiredIf($this->newCategory instanceof Category),
+                Rule::unique('categories', 'name'),
+            ],
+            'newCategory.slug' => [
+                Rule::requiredIf($this->newCategory instanceof Category),
+                Rule::unique('categories', 'slug'),
+            ],
+        ]);
+
         $this->newCategory->save();
         $this->article->category_id = $this->newCategory->id;
         $this->closeCategoryForm();
@@ -64,20 +73,15 @@ class ArticleForm extends Component
                 'required',
                 Rule::exists('categories', 'id')
             ],
-            'newCategory.name' => [
-                Rule::requiredIf($this->newCategory instanceof Category),
-                Rule::unique('categories', 'name'),
-            ],
-            'newCategory.slug' => [
-                Rule::requiredIf($this->newCategory instanceof Category),
-                Rule::unique('categories', 'slug'),
-            ],
+            'newCategory.name' => [],
+            'newCategory.slug' => [],
         ];
     }
 
     public function mount(Article $article)
     {
         $this->article = $article;
+        $this->newCategory = new Category;
     }
 
     public function updated($propertyName)
